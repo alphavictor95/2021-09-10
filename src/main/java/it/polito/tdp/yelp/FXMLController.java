@@ -6,6 +6,8 @@ package it.polito.tdp.yelp;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.yelp.model.Business;
 import it.polito.tdp.yelp.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,10 +39,10 @@ public class FXMLController {
     private TextField txtX2; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbCitta"
-    private ComboBox<?> cmbCitta; // Value injected by FXMLLoader
+    private ComboBox<String> cmbCitta; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbB1"
-    private ComboBox<?> cmbB1; // Value injected by FXMLLoader
+    private ComboBox<Business> cmbB1; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbB2"
     private ComboBox<?> cmbB2; // Value injected by FXMLLoader
@@ -50,12 +52,25 @@ public class FXMLController {
     
     @FXML
     void doCreaGrafo(ActionEvent event) {
-    	
+    	String citta = cmbCitta.getValue();
+    	if(citta==null) {
+    		txtResult.appendText("ERRORE : selezionare una citta");
+    		return;
+    	}
+    	String msg = model.creaGrafo(citta);
+    	txtResult.appendText(msg);
+    	cmbB1.getItems().addAll(model.getLocali());
     }
 
     @FXML
     void doCalcolaLocaleDistante(ActionEvent event) {
 
+    	Business selezionato = cmbB1.getValue();
+    	if(selezionato == null) {
+    		txtResult.appendText("Errore selezionare un locale");
+    		return;
+    	}
+    	txtResult.appendText(""+ model.piuDistante(selezionato));
     	
     }
 
@@ -80,5 +95,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	cmbCitta.getItems().addAll(model.getCitta());
     }
 }
